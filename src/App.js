@@ -1,8 +1,9 @@
-
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import "./App.css";
 import logo from "./logo.png";
+
+const API_BASE = process.env.REACT_APP_API_URL;
 
 function App() {
   const [view, setView] = useState("overview");
@@ -40,7 +41,7 @@ function App() {
   };
 
   useEffect(() => {
-    axios.get("http://localhost:5000/teams")
+    axios.get(`${API_BASE}/teams`)
       .then((res) => setTeams(res.data))
       .catch(() => setError("Failed to load team list."));
   }, []);
@@ -48,9 +49,9 @@ function App() {
   const handleGetTeamStats = async () => {
     if (!selectedTeam) return;
     try {
-      const statsRes = await axios.get(`http://localhost:5000/team_stats/${selectedTeam}`);
+      const statsRes = await axios.get(`${API_BASE}/team_stats/${selectedTeam}`);
       setTeamStats(statsRes.data);
-      const matchRes = await axios.get(`http://localhost:5000/recent_matches/${selectedTeam}`);
+      const matchRes = await axios.get(`${API_BASE}/recent_matches/${selectedTeam}`);
       setRecentMatches(matchRes.data);
     } catch {
       setTeamStats(null);
@@ -64,9 +65,9 @@ function App() {
     if (!team1 || !team2) return setError("Please select both teams.");
 
     try {
-      const res = await axios.post("http://localhost:5000/predict", { team1, team2 });
+      const res = await axios.post(`${API_BASE}/predict`, { team1, team2 });
       setResult(res.data);
-      const matchRes = await axios.get(`http://localhost:5000/last_match/${team1}/${team2}`);
+      const matchRes = await axios.get(`${API_BASE}/last_match/${team1}/${team2}`);
       setLastMatch(matchRes.data);
 
       setMatchHistory((prev) => [
